@@ -26,26 +26,33 @@ Bonus : trouvez le moyen d’utiliser du vert et du rouge pour rendre réussites
 *   FUNCTIONS
 ******************/
 
+/**
+ * Test script files with argument and return a string result
+ * @returns a String with script filename, #of test out of total tests and succeed or failure accordingly
+ */
 function metaCheck(){
     let result = "";
-    let successCount = 0;
-    let scriptTotal = 0;
-    //list all exercices in array like ['air00.js', 'air01.js', etc.]
-    //for each exercice, test if file exists
-    for (let i = 0; i < mapExercicesArguments.length; i++) {
-        const fileData = mapExercicesArguments[i];
+    let successCount = 0; //count how many execution succeed
+    let scriptTotal = 0; //count the total of script executed
+
+    //browse all scipt filenames from the array of scripts and their arguments
+    for (let i = 0; i < arrayScriptsAndArgs.length; i++) {
+        const fileData = arrayScriptsAndArgs[i];
         if (fs.existsSync(fileData[0])){
+            //if file exists, browse the arguments and exec the script
             for (let j = 0; j < fileData[1].length; j++) {
                 let scriptResult = runScript(fileData[0], fileData[1][j]);
+                //console.log(scriptResult.slice(0, -1)); //remove the line break at the end
                 if (scriptResult.slice(0, -1).localeCompare('error') == 0) {
-                    result += fileData[0].slice(0, -3) + " (" + (j + 1) + "/" + fileData[1].length + ") : " + "\033[31m failure \033[0m \n";
+                    result += fileData[0].slice(0, -3) + " (" + (j + 1) + "/" + fileData[1].length + ") : " + "\033[31m failure \033[0m \n"; // displays failure in RED
                 } else {
-                    result += fileData[0].slice(0, -3) + " (" + (j + 1) + "/" + fileData[1].length + ") : " + "\033[32m success \033[0m \n";
+                    result += fileData[0].slice(0, -3) + " (" + (j + 1) + "/" + fileData[1].length + ") : " + "\033[32m success \033[0m \n"; // displays success in GREEN
                     successCount++;
                 }
                 scriptTotal++;
             }
         } else {
+            //console.error("A problem occured, script exits.");
             process.exit(1);
         }
     }
@@ -55,6 +62,12 @@ function metaCheck(){
     return result;
 }
 
+/**
+ * Run a script and its arguments in a command line (ex: node air00.js "Hello world !")
+ * @param {*} filename script filename (ex: 'air00.js')
+ * @param {*} arguments arguments (ex: "Hello world !")
+ * @returns the result of the script
+ */
 function runScript(filename, arguments){
     const execSync = require('child_process').execSync;
     const cmdLine = "node " + filename + " " + arguments.join(" ");
@@ -93,11 +106,9 @@ let checkResult = checkArgumentForError(args);
 
 let result = "error";
 
-const fs = require("fs");
+const fs = require("fs"); // fileSystem used to check if a file exists
 
-const exercices = ['air00.js', 'air01.js', 'air02.js', 'air03.js', 'air04.js', 'air05.js', 'air06.js', 'air07.js', 'air08.js', 'air09.js', 'air10.js', 'air11.js', 'air12.js'];
-
-const mapExercicesArguments = [
+const arrayScriptsAndArgs = [
     ['air00.js', [['\"Bonjour les gars\"'], ['\"Comment ça va?\"'], ['\"Super test ! La folie !\"']]],
     ['air01.js', [['\"Crevette magique dans la mer des étoiles\"', '\"la\"'], ['\"Du beurre dans les épinards\"','\"dans\"']]],
     ['air02.js', [['Je', 'teste', 'des', 'trucs', ' ']]],
